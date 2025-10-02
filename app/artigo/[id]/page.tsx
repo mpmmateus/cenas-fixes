@@ -1,83 +1,55 @@
-"use client"
-import { notFound } from "next/navigation"
+import { notFound } from "next/navigation";
+import { sql } from "@vercel/postgres";
 
 interface Artigo {
-  id: string
-  titulo: string
-  categoria: string
-  videos?: string[]
+  id: number;
+  titulo: string;
+  categoria: string;
+  videos: string[];
 }
-
-// Dados dos artigos com vídeos
-const artigos: Artigo[] = [
-  {
-    id: "1",
-    titulo: "10 Cenas Fixes que vais adorar",
-    categoria: "Curiosidades",
-    videos: [
-      "QM3NgoWamdg",
-      "y5BpRaOA3fc"
-    ],
-  },
-  {
-    id: "2",
-    titulo: "Os melhores memes da semana",
-    categoria: "Humor",
-    videos: [
-      "ttqaYUucMXA",
-      "gnIiGW4v-Jo",
-      "HyPtR4kGtAE",
-      "EW41mBzvCVQ",
-      "rAZzbDVcrMQ",
-      "nSoJN6uoBXo",
-
-    ]
-  },
-  {
-    id: "3",
-    titulo: "Top 5 filmes que tens de ver",
-    categoria: "Cinema",
-    videos: ["BLH_aRk0dtM"]
-  },
-  {
-    id: "4",
-    titulo: "Novidades tecnológicas incríveis",
-    categoria: "Tecnologia",
-    videos: ["wCFTdrlDrNQ"]
-  },
-  {
-    id: "5",
-    titulo: "Receitas fáceis e deliciosas",
-    categoria: "Lifestyle",
-    videos: ["18md1nwaca4"]
-  },
-  {
-    id: "6",
-    titulo: "Desporto: melhores momentos da semana",
-    categoria: "Desporto",
-    videos: ["MNxNNsgXAMY"]
-  },
-]
 
 interface ArtigoPageProps {
-  params: { id: string }
+  params: { id: string };
 }
 
-export default function ArtigoPage({ params }: ArtigoPageProps) {
-  const artigo = artigos.find(a => a.id === params.id)
-  if (!artigo) return notFound()
+export default async function ArtigoPage({ params }: ArtigoPageProps) {
+  // Buscar artigo
+  const artigoResult = await sql`
+    SELECT id, titulo, categoria
+    FROM artigos
+    WHERE id = ${params.id};
+  `;
 
-    return (
+  if (artigoResult.rows.length === 0) return notFound();
+  const artigo = artigoResult.rows[0] as Omit<Artigo, "videos">;
+
+  // Buscar vídeos do artigo
+  const videosResult = await sql`
+    SELECT url
+    FROM videos
+    WHERE artigo_id = ${params.id};
+  `;
+
+  const videos = videosResult.rows.map((row) => row.url);
+
+  return (
     <div className="min-h-screen p-6 bg-gray-50">
       <h1 className="text-2xl font-bold mb-8 text-center">{artigo.titulo}</h1>
+      <p className="text-center text-gray-600 mb-6">
+        <span className="font-medium">{artigo.categoria}</span>
+      </p>
 
-      {artigo.videos && (
+      {videos.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {artigo.videos.map((videoId, index) => (
-            <div key={index} className="relative w-full" style={{ paddingTop: "56.25%" }}>
+          {videos.map((videoId, index) => (
+            <div
+              key={index}
+              className="relative w-full"
+              style={{ paddingTop: "56.25%" }}
+            >
               <iframe
                 src={`https://www.youtube.com/embed/${videoId}`}
-                title="YouTube video player"
+                title={`YouTube video ${index}`}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 style={{
@@ -86,7 +58,7 @@ export default function ArtigoPage({ params }: ArtigoPageProps) {
                   left: 0,
                   width: "100%",
                   height: "100%",
-                  border: "0"
+                  border: "0",
                 }}
               />
             </div>
@@ -94,5 +66,5 @@ export default function ArtigoPage({ params }: ArtigoPageProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

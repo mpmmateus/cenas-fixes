@@ -1,5 +1,6 @@
 "use client"
 
+import SearchBar from "./searchBar" // importa o componente
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
@@ -44,12 +45,16 @@ export default function Navbar() {
         </Link>
 
         {/* Menu Desktop */}
-        <nav className="hidden md:flex gap-6 font-medium text-sm">
+        <nav className="hidden md:flex gap-6 font-medium text-sm items-center">
           {categorias.map(c => (
             <Link key={c.slug} href={c.route} className="hover:text-blue-600">
               {c.nome}
             </Link>
           ))}
+          {/* Barra de pesquisa */}
+          <div className="ml-4 hidden md:block">
+            <SearchBar />
+          </div>
         </nav>
 
         {/* Ações Desktop */}
@@ -86,6 +91,11 @@ export default function Navbar() {
       >
         <div className="p-6 flex flex-col gap-4 h-full">
           <button className="self-end text-2xl" onClick={() => setMenuOpen(false)}>✕</button>
+
+          {/* Pesquisa só no Mobile */}
+          {/*<div className="my-4 md:hidden">*/}
+            {/*<SearchBar />*/}
+          {/*</div>*/}
 
           <nav className="flex flex-col gap-4 font-medium text-sm mt-6">
             {categorias.map(c => (
