@@ -1,5 +1,6 @@
-// app/insolito/[id]/page.tsx
+import { notFound } from "next/navigation";
 import { sql } from "@vercel/postgres";
+import Image from "next/image";
 
 interface Insolito {
   id: number;
@@ -8,26 +9,23 @@ interface Insolito {
   texto: string;
 }
 
-interface PageProps {
+interface InsolitoPageProps {
   params: { id: string };
 }
 
-export default async function InsolitoDetailPage({ params }: PageProps) {
-  const id = parseInt(params.id);
+export default async function InsolitoDetailPage({ params }: InsolitoPageProps) {
+  const result = await sql`SELECT * FROM insolito WHERE id = ${params.id};`;
+  const insolito = result.rows[0] as Insolito | undefined;
 
-  const { rows } = await sql<Insolito>`
-    SELECT * FROM insolito WHERE id = ${id} LIMIT 1
-  `;
-
-  if (!rows[0]) return <p className="p-6">Item não encontrado.</p>;
-
-  const item = rows[0];
+  if (!insolito) return notFound();
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50">
-      <h1 className="text-3xl font-bold mb-4">{item.titulo}</h1>
-      <img src={item.imagem} alt={item.titulo} className="mb-4 w-full max-w-3xl mx-auto" />
-      <p className="text-gray-800">{item.texto}</p>
+    <div className="min-h-screen p-6 bg-gray-50">
+      <h1 className="text-3xl font-bold mb-6 text-center">{insolito.titulo}</h1>
+      <div className="relative w-full h-96 mb-6">
+        <Image src={insolito.imagem} alt={insolito.titulo} fill style={{ objectFit: "cover" }} />
+      </div>
+      <p className="text-lg">{insolito.texto}</p>
     </div>
   );
 }
