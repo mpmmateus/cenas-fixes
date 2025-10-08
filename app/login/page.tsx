@@ -1,33 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
 
-    // Validação simples
-    if (email && password) {
-      localStorage.setItem("isLoggedIn", "true")
-      window.dispatchEvent(new Event("storage")) // dispara um evento que a Navbar pode ouvir
-      router.push("/dashboard")
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (result?.ok) {
+      router.push("/dashboard");
     } else {
-      alert("Preenche todos os campos!")
+      setError("Email ou password incorretos.");
     }
-  }
+  };
 
   return (
-
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-
       <Card className="w-full max-w-md">
         <form onSubmit={handleSubmit}>
           <CardHeader>
@@ -38,24 +43,29 @@ export default function LoginPage() {
               type="email"
               placeholder="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               required
             />
             <Input
               type="password"
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
             />
+            {error && <p className="text-red-500 text-sm">{error}</p>}
           </CardContent>
-          <CardFooter>
-            <Button type="submit" className="w-full">
-              Entrar
-            </Button>
+          <CardFooter className="flex flex-col gap-2">
+            <Button type="submit" className="w-full">Entrar</Button>
+            <p className="text-sm text-center text-gray-600">
+              Não tens conta?{" "}
+              <Link href="/registo" className="text-blue-500 hover:underline">
+                Regista-te aqui
+              </Link>
+            </p>
           </CardFooter>
         </form>
       </Card>
     </div>
-  )
+  );
 }

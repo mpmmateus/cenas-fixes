@@ -1,41 +1,30 @@
 "use client"
 
-import SearchBar from "./searchBar" // importa o componente
+import SearchBar from "./searchBar"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { signOut, useSession } from "next-auth/react"
 
 export default function Navbar() {
   const router = useRouter()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const { data: session } = useSession() // sessão do NextAuth
   const [menuOpen, setMenuOpen] = useState(false)
 
-  useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true"
-    setIsLoggedIn(loggedIn)
-  }, [])
-
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn")
-    setIsLoggedIn(false)
+  const handleLogout = async () => {
+    await signOut({ redirect: false })
     router.push("/login")
   }
+
   const categorias = [
-    { nome: "Notícias", slug: "noticias", route: "/noticias" }, // rota própria
+    { nome: "Notícias", slug: "noticias", route: "/noticias" },
     { nome: "Viral", slug: "viral", route: "/viral" },
     { nome: "Desporto", slug: "desporto", route: "/desporto" },
     { nome: "Insólitos", slug: "insolito", route: "/insolito" },
     { nome: "Tecnologia", slug: "tecnologia", route: "/tecnologia" },
     { nome: "Curiosidades", slug: "curiosidade", route: "/curiosidade" },
   ]
-
-  useEffect(() => {
-    const checkLogin = () => setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true")
-    window.addEventListener("storage", checkLogin)
-    return () => window.removeEventListener("storage", checkLogin)
-  }, [])
-
 
   return (
     <header className="bg-white shadow sticky top-0 z-50">
@@ -51,7 +40,6 @@ export default function Navbar() {
               {c.nome}
             </Link>
           ))}
-          {/* Barra de pesquisa */}
           <div className="ml-4 hidden md:block">
             <SearchBar />
           </div>
@@ -59,8 +47,10 @@ export default function Navbar() {
 
         {/* Ações Desktop */}
         <div className="hidden md:flex items-center gap-4">
-          {isLoggedIn ? (
-            <Button onClick={handleLogout} variant="destructive">Logout</Button>
+          {session ? (
+            <Button onClick={handleLogout} variant="destructive">
+              Logout
+            </Button>
           ) : (
             <Button asChild>
               <Link href="/login">Login</Link>
@@ -69,33 +59,22 @@ export default function Navbar() {
         </div>
 
         {/* Botão Menu Mobile */}
-        <button
-          className="md:hidden p-2 text-2xl"
-          onClick={() => setMenuOpen(true)}
-        >
+        <button className="md:hidden p-2 text-2xl" onClick={() => setMenuOpen(true)}>
           ☰
         </button>
       </div>
 
-      {/* Overlay do menu mobile */}
-      {menuOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => setMenuOpen(false)}
-        ></div>
-      )}
+      {/* Overlay Menu Mobile */}
+      {menuOpen && <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setMenuOpen(false)}></div>}
 
       {/* Sidebar Mobile */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ${
+          menuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="p-6 flex flex-col gap-4 h-full">
           <button className="self-end text-2xl" onClick={() => setMenuOpen(false)}>✕</button>
-
-          {/* Pesquisa só no Mobile */}
-          {/*<div className="my-4 md:hidden">*/}
-            {/*<SearchBar />*/}
-          {/*</div>*/}
 
           <nav className="flex flex-col gap-4 font-medium text-sm mt-6">
             {categorias.map(c => (
@@ -106,7 +85,7 @@ export default function Navbar() {
           </nav>
 
           <div className="mt-auto">
-            {isLoggedIn ? (
+            {session ? (
               <Button onClick={() => { handleLogout(); setMenuOpen(false) }} variant="destructive" className="w-full">
                 Logout
               </Button>

@@ -1,20 +1,70 @@
 import { sql } from "@vercel/postgres";
 
-export async function GET() {
-/*
- // Apagar todas as tabelas
-  await sql`DROP TABLE IF EXISTS curiosidades CASCADE;`;
-  await sql`DROP TABLE IF EXISTS insolito CASCADE;`;
-  await sql`DROP TABLE IF EXISTS tecnologia CASCADE;`;
-  await sql`DROP TABLE IF EXISTS desporto CASCADE;`;
-  await sql`DROP TABLE IF EXISTS virais CASCADE;`;
-  await sql`DROP TABLE IF EXISTS noticias CASCADE;`;
-  await sql`DROP TABLE IF EXISTS videos CASCADE;`;
-  await sql`DROP TABLE IF EXISTS artigos CASCADE;`;
-*/
 
-  // Criar tabela artigos
+export async function GET() {
+
+  // Apagartodas as tabelas
+  /*
+   await sql`DROP TABLE IF EXISTS home CASCADE;`;
+   await sql`DROP TABLE IF EXISTS users CASCADE;`;
+   await sql`DROP TABLE IF EXISTS curiosidades CASCADE;`;
+   await sql`DROP TABLE IF EXISTS insolito CASCADE;`;
+   await sql`DROP TABLE IF EXISTS tecnologia CASCADE;`;
+   await sql`DROP TABLE IF EXISTS desporto CASCADE;`;
+   await sql`DROP TABLE IF EXISTS virais CASCADE;`;
+   await sql`DROP TABLE IF EXISTS noticias CASCADE;`;
+   await sql`DROP TABLE IF EXISTS videos CASCADE;`;
+   await sql`DROP TABLE IF EXISTS artigos CASCADE;`;
+ */
+  // Criar tabela noticias
   await sql`
+    CREATE TABLE IF NOT EXISTS home (
+      id SERIAL PRIMARY KEY,
+      titulo TEXT UNIQUE NOT NULL,
+      imagem TEXT NOT NULL,
+      categoria TEXT NOT NULL
+    );
+  `;
+
+// Inserir notícias iniciais
+await sql`
+    INSERT INTO home (titulo, imagem, categoria) VALUES
+      (
+        '10 Cenas Fixes que vais adorar',
+        '/images/curiosidades.jpg',
+        'Curiosidades'
+      ),
+      (
+        'Os melhores memes da semana',
+        '/images/memes.jpg',
+        'Humor'
+      ),
+      (
+        'Top 5 filmes que tens de ver',
+        '/images/filmes.jpg',
+        'Cinema'
+      ),
+      (
+        'Novidades tecnológicas incríveis',
+        '/images/tecnologia.jpg',
+        'Tecnologia'
+      ),
+        (
+        'Receitas fáceis e deliciosas',
+        '/images/culinaria.jpg',
+        'Lifestyle'
+      ),
+      (
+        'Desporto: melhores momentos da semana',
+        '/images/desporto.jpg',
+        'Desporto'
+      )
+
+    ON CONFLICT DO NOTHING;
+  `;
+
+// Criar tabela artigos
+await sql`
     CREATE TABLE IF NOT EXISTS artigos (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -22,8 +72,8 @@ export async function GET() {
     );
   `;
 
-  // Criar tabela videos
-  await sql`
+// Criar tabela videos
+await sql`
     CREATE TABLE IF NOT EXISTS videos (
       id SERIAL PRIMARY KEY,
       url TEXT NOT NULL,
@@ -31,8 +81,8 @@ export async function GET() {
     );
   `;
 
-  // Inserir artigos
-  await sql`
+// Inserir artigos
+await sql`
     INSERT INTO artigos (titulo, categoria) VALUES
       ('10 Cenas Fixes que vais adorar', 'Curiosidades'),
       ('Os melhores memes da semana', 'Humor'),
@@ -43,8 +93,8 @@ export async function GET() {
     ON CONFLICT DO NOTHING;
   `;
 
-  // Inserir vídeos
-  await sql`
+// Inserir vídeos
+await sql`
     INSERT INTO videos (url, artigo_id) VALUES
       ('QM3NgoWamdg', 1),
       ('y5BpRaOA3fc', 1),
@@ -62,8 +112,8 @@ export async function GET() {
   `;
 
 
-  // Criar tabela noticias
-  await sql`
+// Criar tabela noticias
+await sql`
     CREATE TABLE IF NOT EXISTS noticias (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -72,8 +122,8 @@ export async function GET() {
     );
   `;
 
-  // Inserir notícias iniciais
-  await sql`
+// Inserir notícias iniciais
+await sql`
     INSERT INTO noticias (titulo, imagem, texto) VALUES
       (
         'Maniche e Rui Santos entram em guerra em direto e moderadora é obrigada a intervir',
@@ -93,8 +143,8 @@ export async function GET() {
     ON CONFLICT DO NOTHING;
   `;
 
-   // Criar tabela virais
-  await sql`
+// Criar tabela virais
+await sql`
     CREATE TABLE IF NOT EXISTS virais (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -103,8 +153,8 @@ export async function GET() {
     );
   `;
 
-  // Inserir dados iniciais
-  await sql`
+// Inserir dados iniciais
+await sql`
     INSERT INTO virais (titulo, imagem, texto) VALUES
       (
         'Rolls-Royce histórico avaliado em 1 milhão de euros destruído ao embater em viaduto da A1',
@@ -119,8 +169,8 @@ export async function GET() {
     ON CONFLICT DO NOTHING;
   `;
 
-  // Criar tabela desporto
-  await sql`
+// Criar tabela desporto
+await sql`
     CREATE TABLE IF NOT EXISTS desporto (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -129,8 +179,8 @@ export async function GET() {
     );
   `;
 
-  // Inserir dados iniciais
-  await sql`
+// Inserir dados iniciais
+await sql`
     INSERT INTO desporto (titulo, imagem, texto) VALUES
       (
         'Momento histórico no Mundial sub-20: Foi utilizado o “cartão verde” pela 1ª vez',
@@ -145,8 +195,8 @@ export async function GET() {
     ON CONFLICT DO NOTHING;
   `;
 
-  // Criar tabela insólitos
-  await sql`
+// Criar tabela insólitos
+await sql`
     CREATE TABLE IF NOT EXISTS insolito (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -155,8 +205,8 @@ export async function GET() {
     );
   `;
 
-  // Inserir dados iniciais
-  await sql`
+// Inserir dados iniciais
+await sql`
     INSERT INTO insolito (titulo, imagem, texto) VALUES
       (
         'Passageiro adormece de forma abusiva no avião e mulher à sua frente decide retaliar',
@@ -171,8 +221,8 @@ export async function GET() {
     ON CONFLICT DO NOTHING;
   `;
 
-    // Criar tabela tecnologia
-  await sql`
+// Criar tabela tecnologia
+await sql`
     CREATE TABLE IF NOT EXISTS tecnologia (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -181,8 +231,8 @@ export async function GET() {
     );
   `;
 
-  // Inserir dados iniciais
-  await sql`
+// Inserir dados iniciais
+await sql`
     INSERT INTO tecnologia (titulo, imagem, texto) VALUES
       (
         'Executivo da Apple desafia jornalista a partir ao meio o finíssimo iPhone Air… “Fica por minha conta se conseguires”',
@@ -202,7 +252,7 @@ export async function GET() {
     ON CONFLICT DO NOTHING;
   `;
 
-  // Criar tabela curiosidades
+// Criar tabela curiosidades
 await sql`
   CREATE TABLE IF NOT EXISTS curiosidades (
     id SERIAL PRIMARY KEY,
@@ -237,6 +287,7 @@ await sql`
   ON CONFLICT DO NOTHING;
 `;
 
-  return new Response("tabelas populadas");
-  
+
+return new Response("tabelas populadas");
+
 }
