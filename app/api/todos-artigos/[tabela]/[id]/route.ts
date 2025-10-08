@@ -1,4 +1,4 @@
-// app/api/[tabela]/[id]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 

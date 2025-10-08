@@ -2,10 +2,11 @@
   "name": "cenas-fixes",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
+   "scripts": {
+    "build": "next build",
     "dev": "next dev",
-    "build": "next build --no-lint",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
