@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { sql } from "@vercel/postgres";
-
+export const dynamic = "force-dynamic";
 interface Home {
   id: number;
   titulo: string;
