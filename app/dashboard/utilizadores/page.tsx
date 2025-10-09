@@ -20,12 +20,18 @@ export default function UtilizadoresPage() {
   const [open, setOpen] = useState(false);
 
   // Fetch de utilizadores
-  const fetchUsers = async () => {
-    const res = await fetch("/api/utilizadores");
+const fetchUsers = async () => {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || ""; // ex: https://teu-projeto.vercel.app
+    const res = await fetch(`${baseUrl}/api/utilizadores`);
+    if (!res.ok) throw new Error("Falha ao buscar utilizadores");
     const data = await res.json();
     setUsers(data);
     setFilteredUsers(data);
-  };
+  } catch (error) {
+    console.error("Erro no fetchUsers:", error);
+  }
+};
 
   useEffect(() => {
     fetchUsers();
