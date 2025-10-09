@@ -20,18 +20,17 @@ export default function UtilizadoresPage() {
   const [open, setOpen] = useState(false);
 
   // Fetch de utilizadores
-const fetchUsers = async () => {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || ""; 
-    const res = await fetch(`${baseUrl}/api/utilizadores`);
-    if (!res.ok) throw new Error("Falha ao buscar utilizadores");
-    const data = await res.json();
-    setUsers(data);
-    setFilteredUsers(data);
-  } catch (error) {
-    console.error("Erro no fetchUsers:", error);
-  }
-};
+  const fetchUsers = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+      const res = await fetch("/api/utilizadores");
+      const data = await res.json();
+      setUsers(data);
+      setFilteredUsers(data);
+    } catch (error) {
+      console.error("Erro no fetchUsers:", error);
+    }
+  };
 
   useEffect(() => {
     fetchUsers();
@@ -53,23 +52,35 @@ const fetchUsers = async () => {
   };
 
   // Apagar utilizador
-  const handleDelete = async (id: number) => {
-    if (!confirm("Tem a certeza que quer apagar este utilizador?")) return;
+const handleDelete = async (id: number) => {
+  if (!confirm("Tem a certeza que quer apagar este utilizador?")) return;
+  try {
     await fetch(`/api/utilizadores/${id}`, { method: "DELETE" });
-    fetchUsers();
-  };
+    setUsers(prev => prev.filter(u => u.id !== id));
+  } catch (error) {
+    console.error("Erro ao apagar utilizador:", error);
+  }
+};
 
   // Guardar alterações do utilizador
-  const handleSave = async () => {
-    if (!selectedUser) return;
-    await fetch(`/api/utilizadores/${selectedUser.id}`, {
+const handleSave = async () => {
+  if (!selectedUser) return;
+  try {
+    const res = await fetch(`/api/utilizadores/${selectedUser.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(selectedUser),
     });
+    const updatedUser = await res.json();
+
+    // Atualiza estado local
+    setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
     setOpen(false);
-    fetchUsers();
-  };
+  } catch (error) {
+    console.error("Erro ao atualizar utilizador:", error);
+  }
+};
+
 
   return (
     <div className="space-y-6">
