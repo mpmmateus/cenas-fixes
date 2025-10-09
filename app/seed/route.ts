@@ -3,8 +3,8 @@ import { sql } from "@vercel/postgres";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  
-    if (process.env.NODE_ENV === "production") {
+
+  if (process.env.NODE_ENV === "production") {
     return new Response("Seed não disponível em produção", { status: 403 });
   }
 
@@ -21,8 +21,9 @@ export async function GET() {
    await sql`DROP TABLE IF EXISTS videos CASCADE;`;
    await sql`DROP TABLE IF EXISTS artigos CASCADE;`;
  */
-  // Criar tabela noticias
-  await sql`
+  try {
+    // Criar tabela noticias
+    await sql`
     CREATE TABLE IF NOT EXISTS home (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -31,8 +32,8 @@ export async function GET() {
     );
   `;
 
-// Inserir notícias iniciais
-await sql`
+    // Inserir notícias iniciais
+    await sql`
     INSERT INTO home (titulo, imagem, categoria) VALUES
       (
         '10 Cenas Fixes que vais adorar',
@@ -68,8 +69,8 @@ await sql`
     ON CONFLICT DO NOTHING;
   `;
 
-// Criar tabela artigos
-await sql`
+    // Criar tabela artigos
+    await sql`
     CREATE TABLE IF NOT EXISTS artigos (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -77,8 +78,8 @@ await sql`
     );
   `;
 
-// Criar tabela videos
-await sql`
+    // Criar tabela videos
+    await sql`
     CREATE TABLE IF NOT EXISTS videos (
       id SERIAL PRIMARY KEY,
       url TEXT NOT NULL,
@@ -86,8 +87,8 @@ await sql`
     );
   `;
 
-// Inserir artigos
-await sql`
+    // Inserir artigos
+    await sql`
     INSERT INTO artigos (titulo, categoria) VALUES
       ('10 Cenas Fixes que vais adorar', 'Curiosidades'),
       ('Os melhores memes da semana', 'Humor'),
@@ -98,8 +99,8 @@ await sql`
     ON CONFLICT DO NOTHING;
   `;
 
-// Inserir vídeos
-await sql`
+    // Inserir vídeos
+    await sql`
     INSERT INTO videos (url, artigo_id) VALUES
       ('QM3NgoWamdg', 1),
       ('y5BpRaOA3fc', 1),
@@ -117,8 +118,8 @@ await sql`
   `;
 
 
-// Criar tabela noticias
-await sql`
+    // Criar tabela noticias
+    await sql`
     CREATE TABLE IF NOT EXISTS noticias (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -127,8 +128,8 @@ await sql`
     );
   `;
 
-// Inserir notícias iniciais
-await sql`
+    // Inserir notícias iniciais
+    await sql`
     INSERT INTO noticias (titulo, imagem, texto) VALUES
       (
         'Maniche e Rui Santos entram em guerra em direto e moderadora é obrigada a intervir',
@@ -148,8 +149,8 @@ await sql`
     ON CONFLICT DO NOTHING;
   `;
 
-// Criar tabela virais
-await sql`
+    // Criar tabela virais
+    await sql`
     CREATE TABLE IF NOT EXISTS virais (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -158,8 +159,8 @@ await sql`
     );
   `;
 
-// Inserir dados iniciais
-await sql`
+    // Inserir dados iniciais
+    await sql`
     INSERT INTO virais (titulo, imagem, texto) VALUES
       (
         'Rolls-Royce histórico avaliado em 1 milhão de euros destruído ao embater em viaduto da A1',
@@ -174,8 +175,8 @@ await sql`
     ON CONFLICT DO NOTHING;
   `;
 
-// Criar tabela desporto
-await sql`
+    // Criar tabela desporto
+    await sql`
     CREATE TABLE IF NOT EXISTS desporto (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -184,8 +185,8 @@ await sql`
     );
   `;
 
-// Inserir dados iniciais
-await sql`
+    // Inserir dados iniciais
+    await sql`
     INSERT INTO desporto (titulo, imagem, texto) VALUES
       (
         'Momento histórico no Mundial sub-20: Foi utilizado o “cartão verde” pela 1ª vez',
@@ -200,8 +201,8 @@ await sql`
     ON CONFLICT DO NOTHING;
   `;
 
-// Criar tabela insólitos
-await sql`
+    // Criar tabela insólitos
+    await sql`
     CREATE TABLE IF NOT EXISTS insolito (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -210,8 +211,8 @@ await sql`
     );
   `;
 
-// Inserir dados iniciais
-await sql`
+    // Inserir dados iniciais
+    await sql`
     INSERT INTO insolito (titulo, imagem, texto) VALUES
       (
         'Passageiro adormece de forma abusiva no avião e mulher à sua frente decide retaliar',
@@ -226,8 +227,8 @@ await sql`
     ON CONFLICT DO NOTHING;
   `;
 
-// Criar tabela tecnologia
-await sql`
+    // Criar tabela tecnologia
+    await sql`
     CREATE TABLE IF NOT EXISTS tecnologia (
       id SERIAL PRIMARY KEY,
       titulo TEXT UNIQUE NOT NULL,
@@ -236,8 +237,8 @@ await sql`
     );
   `;
 
-// Inserir dados iniciais
-await sql`
+    // Inserir dados iniciais
+    await sql`
     INSERT INTO tecnologia (titulo, imagem, texto) VALUES
       (
         'Executivo da Apple desafia jornalista a partir ao meio o finíssimo iPhone Air… “Fica por minha conta se conseguires”',
@@ -257,8 +258,8 @@ await sql`
     ON CONFLICT DO NOTHING;
   `;
 
-// Criar tabela curiosidades
-await sql`
+    // Criar tabela curiosidades
+    await sql`
   CREATE TABLE IF NOT EXISTS curiosidades (
     id SERIAL PRIMARY KEY,
     titulo TEXT UNIQUE NOT NULL,
@@ -268,8 +269,8 @@ await sql`
   );
 `;
 
-// Inserir dados
-await sql`
+    // Inserir dados
+    await sql`
   INSERT INTO curiosidades (titulo, imagem, texto, video) VALUES
     (
       'Maior cápsula do tempo foi finalmente aberta 48 anos depois',
@@ -293,6 +294,10 @@ await sql`
 `;
 
 
-return new Response("tabelas populadas");
+    return new Response("tabelas populadas");
+  } catch (err) {
+    console.error("Erro ao popular as tabelas:", err);
+    return new Response("Erro ao popular as tabelas", { status: 500 });
+  }
 
 }
