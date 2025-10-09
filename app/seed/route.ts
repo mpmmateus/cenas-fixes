@@ -3,6 +3,10 @@ import { sql } from "@vercel/postgres";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  
+    if (process.env.NODE_ENV === "production") {
+    return new Response("Seed não disponível em produção", { status: 403 });
+  }
 
   // Apagartodas as tabelas
   /*
