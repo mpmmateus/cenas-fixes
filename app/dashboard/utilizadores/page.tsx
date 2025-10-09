@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 type User = {
   id: number;
@@ -21,20 +21,16 @@ export default function UtilizadoresPage() {
 
   // Fetch de utilizadores
   const fetchUsers = async () => {
-    try {
-      const res = await fetch("/api/utilizadores");
-      const data = await res.json();
-      setUsers(data);
-    } catch (error) {
-      console.error("Erro no fetchUsers:", error);
-    }
+    const res = await fetch("/api/utilizadores");
+    const data = await res.json();
+    setUsers(data);
+    setFilteredUsers(data);
   };
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // Atualiza filteredUsers sempre que users ou search mudam
   useEffect(() => {
     setFilteredUsers(
       users.filter(u =>
@@ -42,7 +38,7 @@ export default function UtilizadoresPage() {
         u.email.toLowerCase().includes(search.toLowerCase())
       )
     );
-  }, [users, search]);
+  }, [search, users]);
 
   // Abrir modal para editar
   const handleEdit = (user: User) => {
@@ -53,35 +49,20 @@ export default function UtilizadoresPage() {
   // Apagar utilizador
   const handleDelete = async (id: number) => {
     if (!confirm("Tem a certeza que quer apagar este utilizador?")) return;
-    try {
-      const res = await fetch(`/api/utilizadores/${id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erro ao apagar");
-      // Atualiza a lista localmente
-      setUsers(prev => prev.filter(u => u.id !== id));
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao apagar utilizador");
-    }
+    await fetch(`/api/utilizadores/${id}`, { method: "DELETE" });
+    fetchUsers();
   };
 
   // Guardar alterações do utilizador
   const handleSave = async () => {
     if (!selectedUser) return;
-    try {
-      const res = await fetch(`/api/utilizadores/${selectedUser.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selectedUser),
-      });
-      const updatedUser = await res.json();
-      if (!res.ok) throw new Error(updatedUser.error || "Erro ao atualizar");
-      setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao atualizar utilizador");
-    }
+    await fetch(`/api/utilizadores/${selectedUser.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(selectedUser),
+    });
+    setOpen(false);
+    fetchUsers();
   };
 
   return (
