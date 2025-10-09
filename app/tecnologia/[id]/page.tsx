@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { sql } from "@vercel/postgres";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic"; // ✅ força server-side rendering
+
 interface Tecnologia {
   id: number;
   titulo: string;

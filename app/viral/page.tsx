@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { sql } from "@vercel/postgres";
 
+export const dynamic = "force-dynamic"; // ✅ força server-side rendering
+
 interface Viral {
   id: number;
   titulo: string;
