@@ -22,7 +22,7 @@ export default function UtilizadoresPage() {
   // Fetch de utilizadores
 const fetchUsers = async () => {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || ""; // ex: https://teu-projeto.vercel.app
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || ""; 
     const res = await fetch(`${baseUrl}/api/utilizadores`);
     if (!res.ok) throw new Error("Falha ao buscar utilizadores");
     const data = await res.json();
