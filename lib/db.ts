@@ -16,7 +16,9 @@ export async function seedUsers() {
 
 }
 
-// Seed automático em dev
-if (process.env.NODE_ENV !== "production") {
-  seedUsers().then(() => console.log("Seed de users carregado")).catch(console.error);
+if (process.env.NODE_ENV === "development") {
+  seedUsers()
+    .then(() => console.log("Seed de users carregado"))
+    .catch((err) => console.error("Erro no seed:", err));
 }
+
