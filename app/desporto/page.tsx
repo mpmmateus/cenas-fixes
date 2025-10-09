@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { sql } from "@vercel/postgres";
 
+export const dynamic = "force-dynamic";
 interface Desporto {
   id: number;
   titulo: string;

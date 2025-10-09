@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { sql } from "@vercel/postgres";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
 interface Noticia {
   id: number;
   titulo: string;
