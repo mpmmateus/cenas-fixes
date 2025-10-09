@@ -22,6 +22,7 @@ export async function GET() {
    await sql`DROP TABLE IF EXISTS artigos CASCADE;`;
  */
   try {
+    
     // Criar tabela noticias
     await sql`
     CREATE TABLE IF NOT EXISTS home (
