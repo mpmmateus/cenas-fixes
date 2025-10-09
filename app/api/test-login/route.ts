@@ -1,6 +1,7 @@
 // app/api/test-login/route.ts
 import { NextRequest } from "next/server";
 import { sql } from "@/lib/db";
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {

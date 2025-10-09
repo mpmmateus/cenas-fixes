@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { sql } from "@vercel/postgres";
+export const dynamic = "force-dynamic";
 
 interface Artigo {
   id: number;

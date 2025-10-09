@@ -1,6 +1,7 @@
 import { type AuthOptions, type User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { sql } from "@/lib/db";
+export const dynamic = "force-dynamic";
 
 interface DBUser {
   id: number;

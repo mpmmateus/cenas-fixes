@@ -1,6 +1,7 @@
 import { sql } from "@vercel/postgres";
 
 export { sql };
+export const dynamic = "force-dynamic";
 
 // Função para criar tabela de users e inserir seed
 export async function seedUsers() {

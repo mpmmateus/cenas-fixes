@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
+export const dynamic = "force-dynamic";
 
 // POST /api/registo
 export async function POST(req: Request) {
